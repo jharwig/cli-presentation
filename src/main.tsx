@@ -5,6 +5,7 @@ import blessed from "blessed";
 import { createBlessedRenderer } from "react-blessed";
 
 import App from "./components/App";
+import "./logger";
 
 const renderer = createBlessedRenderer(blessed);
 const screen = blessed.screen({
@@ -19,12 +20,13 @@ screen.key(["r"], () => {
   screen.render();
 });
 
-main();
+renderApp();
 
-async function main() {
-  renderApp();
+function renderApp() {
+  renderer(<App screen={screen} />, screen);
 }
 
-function renderApp(webpacks = [], onRestart = null) {
-  renderer(<App screen={screen} />, screen);
+require("./signal");
+if (module["hot"]) {
+  module["hot"].accept("./components/App", renderApp);
 }

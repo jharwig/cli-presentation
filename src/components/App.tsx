@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import "react-blessed";
+import React, { useRef, useLayoutEffect } from "react";
+import reactBlessed from "react-blessed";
+import chalk from "chalk";
 import { Carousel, Markdown } from "react-blessed-contrib";
 
 const App: React.FC<{
@@ -15,33 +16,40 @@ const App: React.FC<{
 
   return (
     <blessed-box>
-      {/* <blessed-bigtext
-        font={"/Users/jharwig/Code/work/aux/ttystudio/fonts/ter-u32n.json"}
-        fontBold={"/Users/jharwig/Code/work/aux/ttystudio/fonts/ter-u32b.json"}
-        width={"100%"}
-        height={5}
-      >
-        {"Testing"}
-      </blessed-bigtext> */}
-
+      <blessed-box top={0} height={1} style={{ bg: "#F41" }} />
       <blessed-box
-        label={"Hey"}
-        border={{ type: "line" }}
+        align="center"
+        valign="middle"
+        top={1}
+        height={2}
+        style={{ bg: "#F41" }}
+      >
+        {chalk.bold.bgHex("#F41").hex("#fff")(" Curses, Blessed, etc.")}
+      </blessed-box>
+      {/* <blessed-box LINE
+        ch={" "}
+        top={1}
+        height={1}
+        width={"100%"}
+        style={{ bg: "#F11" }}
+      /> */}
+      <blessed-box
+        top={4}
+        label={chalk.bold.underline("Hey 2")}
+        // border={{ type: "line" }}
         style={{ border: { fg: "cyan" } }}
       >
         <Markdown>
           {`
-# Hello
+This is **markdown** *printed* in the \`terminal\`        
 
-This is **markdown** printed in the \`terminal\`        
 
-1. first
+
+1. First
 1. Second
 
 * Bulleted list
 * More
-
-## Sub
         `}
         </Markdown>
       </blessed-box>
@@ -54,14 +62,14 @@ This is **markdown** printed in the \`terminal\`
         filled={50}
       ></blessed-progressbar> */}
 
-      <blessed-image
+      {/* <blessed-image
         left={0}
         top={1}
         bottom={1}
         width={50}
         // type={"overlay"}
         file={"/Users/jharwig/Desktop/markdown-screen-100.png"}
-      ></blessed-image>
+      ></blessed-image> */}
 
       {/* <blessed-line width={"100%"} height={1} /> */}
     </blessed-box>
@@ -78,3 +86,25 @@ This is **markdown** printed in the \`terminal\`
 };
 
 export default App;
+
+function BigText({ text }) {
+  const bigText = useRef();
+  useLayoutEffect(() => {
+    if (bigText.current) {
+      // bigText.current.font = bigText.current.loadFont(
+      //   "/Users/jharwig/Code/work/aux/ttystudio/fonts/ter-u14n.json"
+      // );
+    }
+  }, []);
+  // fch={"\u2022"}
+  // top={-4}
+  //     height={12}
+  return (
+    <blessed-bigtext
+      left={"center"}
+      ref={bigText}
+      content={text}
+      style={{ fg: "cyan" }}
+    />
+  );
+}
