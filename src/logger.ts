@@ -1,7 +1,9 @@
 import log from "simple-node-logger";
 
 const logger = log.createSimpleFileLogger("combined.log");
-logger.setLevel("debug");
+logger.setLevel("all");
+
+export default logger;
 
 if (module["hot"]) {
   console.log = logger.log.bind(logger);

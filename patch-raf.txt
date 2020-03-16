@@ -1,0 +1,11 @@
+--- node_modules/raf/index.js.bak	2020-03-15 08:39:58.000000000 -0500
++++ node_modules/raf/index.js	2020-03-15 08:40:07.000000000 -0500
+@@ -16,7 +16,7 @@
+   var last = 0
+     , id = 0
+     , queue = []
+-    , frameDuration = 1000 / 60
++    , frameDuration = 1000 / 30
+ 
+   raf = function(callback) {
+     if(queue.length === 0) {

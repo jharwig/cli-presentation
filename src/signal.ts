@@ -2,10 +2,13 @@
 // but I removed the console.logs I don't care about
 // so that they don't overlap my application.
 
+import console from "./logger";
+
 if (module["hot"]) {
   const { hot }: { hot: any } = module as any;
   function checkForUpdate(fromUpdate) {
     hot.check(function(err, updatedModules) {
+      console.log(updatedModules);
       if (err) {
         if (
           hot.status() in
@@ -61,6 +64,7 @@ if (module["hot"]) {
       console.warn(
         "[HMR] Got signal but currently in " + hot.status() + " state."
       );
+
       console.warn("[HMR] Need to be in idle state to start hot update.");
       return;
     }

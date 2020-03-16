@@ -5,14 +5,17 @@ import blessed from "blessed";
 import { createBlessedRenderer } from "react-blessed";
 
 import App from "./components/App";
+import { ScreenContext } from "./components/context";
 import "./logger";
 
 const renderer = createBlessedRenderer(blessed);
 const screen = blessed.screen({
+  // dump: __dirname + "../dump.log",
+  debug: true,
   title: "Presentation",
   smartCSR: true,
-  dockBorders: false,
-  fullUnicode: true,
+  dockBorders: true,
+  // fullUnicode: true,
   autoPadding: true
 });
 screen.key(["q", "C-c"], () => process.exit(0));
@@ -23,7 +26,12 @@ screen.key(["r"], () => {
 renderApp();
 
 function renderApp() {
-  renderer(<App screen={screen} />, screen);
+  renderer(
+    <ScreenContext.Provider value={screen}>
+      <App screen={screen} />
+    </ScreenContext.Provider>,
+    screen
+  );
 }
 
 require("./signal");

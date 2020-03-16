@@ -5,6 +5,12 @@ var webpack = require("webpack");
 var path = require("path");
 var fs = require("fs");
 var nodemon = require("nodemon");
+var log = require("simple-node-logger");
+
+const logger = log.createSimpleFileLogger("server.log");
+logger.setLevel("all");
+
+logger.log("Starting Server…");
 
 var nodeModules = {};
 fs.readdirSync("node_modules")
@@ -71,15 +77,32 @@ webpack(backendConfig).watch(
           js: "node"
         },
         script: path.join(__dirname, "build", "backend"),
+        restartable: false,
         ignore: ["*"],
         watch: ["foo/"],
-        ext: "noop"
+        ext: "noop",
+        stdin: false
+        // verbose: true,
+        // spawn: true
       });
+
+      nodemon
+        .on("exit", function() {
+          logger.log("exit");
+          process.exit();
+        })
+        .on("crash", function() {
+          logger.log("crash");
+          process.exit();
+        })
+        .on("quit", function() {
+          logger.log("quit");
+          process.exit();
+        });
     }
 
     // There's a trick here. Restart will just send SIGUSR2 to our process.
     // src/signal.js will intercept it and handle hot update instead of restarting.
-
     nodemon.restart();
   }
 );
