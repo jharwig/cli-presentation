@@ -5,10 +5,8 @@ logger.setLevel("all");
 
 export default logger;
 
-if (module["hot"]) {
-  console.log = logger.log.bind(logger);
-  console.warn = logger.warn.bind(logger);
-  console.error = logger.error.bind(logger);
-  console.info = logger.info.bind(logger);
-  console.debug = logger.debug.bind(logger);
-}
+console.log = logger.info.bind(logger);
+console.warn = logger.warn.bind(logger);
+console.error = logger.error.bind(logger);
+console.info = logger.info.bind(logger);
+console.debug = logger.debug.bind(logger);

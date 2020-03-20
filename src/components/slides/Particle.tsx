@@ -6,9 +6,10 @@ import logger from "../../logger";
 import chalk from "chalk";
 import Footer from "../Footer";
 
-const PARTICLES = 200;
-const PERCENT_MOVING = 0.99;
+const PARTICLES = 150;
+const PERCENT_MOVING = 0.95;
 const RECOVERY_INIT = 100;
+const SICK_START_PERCENT = 0.05;
 
 enum IState {
   Healthy,
@@ -39,7 +40,7 @@ const useRedraw = () => {
 };
 
 const createParticles = screen => {
-  let createdSick = false;
+  let createdSick = Math.round(SICK_START_PERCENT * PARTICLES);
   const particles: IParticle[] = [];
   for (let i = 0; i < PARTICLES; i++) {
     particles.push(createParticle(i));
@@ -49,12 +50,12 @@ const createParticles = screen => {
   function createParticle(i) {
     const accel = randomAccel();
     let sick = {};
-    if (accel.aX !== 0 && !createdSick) {
+    if (accel.aX !== 0 && createdSick > 0) {
+      createdSick--;
       sick = {
         state: IState.Sick,
         recovery: RECOVERY_INIT
       };
-      createdSick = true;
     }
 
     return {
@@ -89,7 +90,7 @@ function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
 }
 
-function update(dt, particles, screen) {
+function update(dt, particles, screen, startTime) {
   const damping = dt * 0.05;
   const DRAG = 0.3;
   const RESISTANCE = 0.1;
@@ -165,7 +166,11 @@ function update(dt, particles, screen) {
   chart.sick = chart.sick / particles.length;
   chart.recovered = chart.recovered / particles.length;
   chart.healthy = chart.healthy / particles.length;
-  return { shouldCancel: !noneSick, chart };
+
+  return {
+    shouldContinue: Date.now() - startTime < 5000 || !noneSick,
+    chart
+  };
 }
 
 const Particle = () => {
@@ -173,6 +178,7 @@ const Particle = () => {
   const screen = useContext(ScreenContext);
   const particles = useRef<IParticle[]>();
   const charts = useRef<ICount[]>();
+  const initTime = useRef<number>();
   const redraw = useRedraw();
   const [renderChart, setChartsToRender] = useState<any>(null);
 
@@ -184,17 +190,18 @@ const Particle = () => {
   useAnimationFrame(
     deltaTime => {
       if (state === 0) return;
-      const { shouldCancel, chart } = update(
+      const { shouldContinue, chart } = update(
         deltaTime,
         particles.current,
-        screen
+        screen,
+        initTime.current
       );
       charts.current.push(chart);
-      if (!shouldCancel) {
+      if (!shouldContinue) {
         //logger.warn(charts.current.length, JSON.stringify(charts.current));
 
         const entries = charts.current.length;
-        const maxBars = Math.trunc(screen.width / 3) - 7;
+        const maxBars = Math.trunc(screen.width / 3) - 8;
         const takeEvery = Math.trunc((entries - 2) / (maxBars - 2) + 1);
         const barCategory = [];
         const toRender = charts.current
@@ -221,7 +228,7 @@ const Particle = () => {
       } else {
         redraw();
       }
-      return shouldCancel;
+      return shouldContinue;
     },
     [state]
   );
@@ -232,6 +239,7 @@ const Particle = () => {
       setState(state => {
         if (state === 0) {
           particles.current = createParticles(screen);
+          initTime.current = Date.now();
           charts.current = [];
         }
         const newState = (state + 1) % 2;
@@ -246,17 +254,46 @@ const Particle = () => {
   return (
     <blessed-box>
       {state === 0 ? (
-        <blessed-box left={"50%-10"} top={"50%"}>
-          {chalk.hex("#999")("press [SPACE] to start")}
-        </blessed-box>
+        <>
+          {/* <blessed-textbox
+            value="Testing"
+            top={0}
+            height={1}
+            width={10}
+            keys
+            mouse
+            inputOnFocus
+          ></blessed-textbox> */}
+          {/* <blessed-radioset>
+            <blessed-radiobutton
+              top={0}
+              height={1}
+              width={10}
+              text="X"
+              mouse
+            ></blessed-radiobutton>
+            <blessed-radiobutton
+              top={0}
+              height={1}
+              left={10}
+              width={10}
+              text="Y"
+              mouse
+            ></blessed-radiobutton>
+          </blessed-radioset> */}
+
+          <blessed-box left={"50%-10"} top={"50%"}>
+            {chalk.hex("#999")("press [SPACE] to start")}
+          </blessed-box>
+        </>
       ) : renderChart ? (
         <StackedBar
           barWidth={1}
           barSpacing={1}
           xOffset={0}
           maxValue={1}
-          left={0}
-          top={-1}
+          left={1}
+          top={-2}
           height={"100%-1"}
           width={"100%"}
           showText={false}
@@ -293,7 +330,10 @@ const Particle = () => {
           )
         )
       )}
-      <Footer text="Disease Spread Simulation" />
+      <Footer
+        text="Disease Spread Simulation"
+        right={renderChart ? "blessed-contrib/bar" : ""}
+      />
     </blessed-box>
   );
 };

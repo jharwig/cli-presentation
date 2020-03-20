@@ -17,7 +17,7 @@ function BigText({ text }) {
       left={"center"}
       ref={bigText}
       content={text}
-      style={{ fg: "cyan" }}
+      style={{ fg: "#F41" }}
     />
   );
 }

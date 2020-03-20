@@ -35,7 +35,7 @@ const Map: React.FC<{
   startLat?: number;
   endLat?: number;
   endLon?: number;
-  markers: any[];
+  markers?: any[];
 }> = ({ region, startLon, endLon, startLat, endLat, markers = [] }) => {
   const mappedMarkers = markers.map(m => ({
     color: "red",
@@ -53,6 +53,7 @@ const Map: React.FC<{
         endLon,
         markers: mappedMarkers
       }}
+      labelSpace={0}
       style={{ shapeColor: "green", stroke: "red", fill: "blue" }}
     ></_Map>
   );
