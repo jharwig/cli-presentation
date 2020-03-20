@@ -2,6 +2,8 @@
 
 Creating High-Fidelity CLI Tools
 
+[PDF Version](./cli-presentation-jharwig.pdf)
+
 ![screen](./screen.png)
 
 Start
