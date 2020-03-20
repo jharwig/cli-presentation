@@ -2,6 +2,8 @@
 
 Creating High-Fidelity CLI Tools
 
+![screen](./screen.png)
+
 Start
 ```sh
 > node index.js
