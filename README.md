@@ -8,6 +8,7 @@ Creating High-Fidelity CLI Tools
 
 Start
 ```sh
+> yarn
 > node index.js
 ```
 
