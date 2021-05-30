@@ -46,6 +46,6 @@
     "babel-loader": "^8.0.6",
     "react-devtools-core": "^4.0.0",
     "webpack": "^4.42.0",
-    "ws": "^7.2.3"
+    "ws": "^7.4.6"
   }
 }
