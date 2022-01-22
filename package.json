@@ -25,7 +25,7 @@
     "marked": "^0.8.0",
     "marked-terminal": "^4.0.0",
     "neo-blessed": "^0.2.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "nodemon": "^2.0.2",
     "raf": "^3.4.1",
     "react": "^16.12.0",
